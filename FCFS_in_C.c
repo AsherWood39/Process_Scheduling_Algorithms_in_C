@@ -3,7 +3,7 @@
 #define MAX_PROCESS 10 // Define the maximum number of processes
 
 // Structure to represent a process with necessary attributes
-struct Process 
+typedef struct  
 {
     int process_id;         // Process ID
     int arrival_time;       // Arrival time of the process
@@ -11,7 +11,9 @@ struct Process
     int completion_time;    // Completion time after process execution
     int turn_around_time;   // Turnaround time = Completion time - Arrival time
     int waiting_time;       // Waiting time = Turnaround time - Burst time
-} processes[MAX_PROCESS];   // Declare an array of processes with a maximum size of 10
+} Process;
+
+Process processes[MAX_PROCESS];   // Declare an array of processes with a maximum size of 10
 
 int n;  // Global variable to store the number of processes
 
@@ -26,7 +28,7 @@ void fcfs_scheduling()
             if (processes[j].arrival_time > processes[j + 1].arrival_time) 
             {
                 // Swap the processes if their arrival time is in the wrong order
-                struct Process temp = processes[j];
+                Process temp = processes[j];
                 processes[j] = processes[j + 1];
                 processes[j + 1] = temp;
             }
