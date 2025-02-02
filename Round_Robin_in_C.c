@@ -3,7 +3,8 @@
 #define MAX_PROCESS 10  // Maximum number of processes that can be handled
 
 // Structure to represent a process
-struct Process {
+typedef struct  
+{
     int process_id;        // Process ID (identifier)
     int arrival_time;      // Time at which the process arrives in the ready queue
     int burst_time;        // CPU burst time required by the process
@@ -11,9 +12,12 @@ struct Process {
     int turn_around_time;  // Turnaround time (completion_time - arrival_time)
     int waiting_time;      // Waiting time (turn_around_time - burst_time)
     int remaining_time;    // Remaining time for the process to execute
-} processes[MAX_PROCESS];  // Array of processes
+} Process;
+
+Process processes[MAX_PROCESS];  // Array of processes
 
 int gantt_chart[2 * MAX_PROCESS][2], I = 0;  // Gantt chart to track the execution sequence
+
 int n, q;  // Number of processes and time quantum (slice of time for Round Robin)
 
 // Function to perform Round Robin Scheduling and calculate the completion time, turnaround time and waiting time
@@ -37,7 +41,7 @@ void round_robin_scheduling()
             if (processes[j].arrival_time > processes[j + 1].arrival_time) 
             {
                 // Swap the processes if their arrival time is in the wrong order
-                struct Process temp = processes[j];
+                Process temp = processes[j];
                 processes[j] = processes[j + 1];
                 processes[j + 1] = temp;
             }
