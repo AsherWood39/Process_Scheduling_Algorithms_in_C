@@ -55,7 +55,7 @@ void fcfs_scheduling()
 // Function to calculate the average turnaround time of all processes
 float calculate_average_turnaround_time() 
 {
-    int total_turnaround_time = 0;
+    int total_turnaround_time = 0;  // Variable to store total turnaround time
 
     // Loop through all processes and accumulate the total turnaround time
     for (int i = 0; i < n; i++)
@@ -67,7 +67,7 @@ float calculate_average_turnaround_time()
 // Function to calculate the average waiting time of all processes
 float calculate_average_waiting_time() 
 {
-    int total_waiting_time = 0;
+    int total_waiting_time = 0; // Variable to store total waiting time
 
     // Loop through all processes and accumulate the total waiting time
     for (int i = 0; i < n; i++)

@@ -72,7 +72,7 @@ void sjf_scheduling()
 // Function to calculate average turnaround time
 float calculate_average_turnaround_time()
 {
-    int total_turnaround_time = 0;
+    int total_turnaround_time = 0;  // Variable to store total turnaround time
 
     // Calculate the sum of all turnaround times
     for (int i = 0; i < n; i++)
@@ -84,7 +84,7 @@ float calculate_average_turnaround_time()
 // Function to calculate average waiting time
 float calculate_average_waiting_time()
 {
-    int total_waiting_time = 0;
+    int total_waiting_time = 0; // Variable to store total waiting time
 
     // Calculate the sum of all waiting times
     for (int i = 0; i < n; i++)
