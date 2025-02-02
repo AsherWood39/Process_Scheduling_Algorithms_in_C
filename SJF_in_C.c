@@ -3,7 +3,7 @@
 #define MAX_PROCESS 10  // Maximum number of processes
 
 // Structure to represent a process
-struct Process
+typedef struct 
 {
     int process_id;         // Unique ID for the process
     int arrival_time;       // Arrival time of the process
@@ -12,7 +12,9 @@ struct Process
     int turn_around_time;   // Turnaround time = Completion time - Arrival time
     int waiting_time;       // Waiting time = Turnaround time - Burst time
     int remaining_time;     // Remaining time for the process during execution
-} processes[MAX_PROCESS];   // Declare an array of processes with a maximum size of 10
+} Process;
+
+Process processes[MAX_PROCESS];   // Declare an array of processes with a maximum size of 10
 
 int gantt_chart[MAX_PROCESS], I = 0;   // Array to store the order of processes in the Gantt chart and a counter variable
 
