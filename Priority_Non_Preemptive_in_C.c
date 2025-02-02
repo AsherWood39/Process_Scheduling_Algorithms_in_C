@@ -11,17 +11,19 @@ struct Process
     int completion_time;    // Time at which the process finishes execution
     int turn_around_time;   // Turnaround time = Completion time - Arrival time
     int waiting_time;       // Waiting time = Turnaround time - Burst time
+    int priority;           // Priority of the process
     int remaining_time;     // Remaining time for the process during execution
 } processes[MAX_PROCESS];   // Declare an array of processes with a maximum size of 10
+
 
 int gantt_chart[MAX_PROCESS], I = 0;   // Array to store the order of processes in the Gantt chart and a counter variable
 
 int n;  // Global variable to store the number of processes
 
-// Function to perform SJF scheduling and calculate completion time, turnaround time and waiting time for each process
-void sjf_scheduling()
+// Function to perform Non Pre-emptive Priority Scheduling and calculate completion time, turnaround time and waiting time for each process
+void non_preemptive_priority_scheduling()
 {
-    int current_time = 0, completed_processes = 0, min_burst_time, shortest_process;
+    int current_time = 0, completed_processes = 0, min_priority, shortest_process;
 
     // Initialize remaining time for each process to its burst time
     for (int i = 0; i < n; i++) 
@@ -29,18 +31,18 @@ void sjf_scheduling()
         processes[i].remaining_time = processes[i].burst_time;
     }
 
-    // Execute the processes using a scheduling algorithm (Shortest Job First)
+    // Execute the processes using a scheduling algorithm (Non Pre-emptive Priority Scheduling)
     while (completed_processes < n) 
     {
-        min_burst_time = __INT_MAX__;   // Initialize with maximum integer value
+        min_priority = __INT_MAX__;     // Initialize with maximum integer value
         shortest_process = -1;          // Initialize to an invalid index
 
-        // Find the process with the shortest remaining time and which has arrived
+        // Find the process with the highest priority that has arrived
         for (int i = 0; i < n; i++) 
         {
-            if (processes[i].arrival_time <= current_time && processes[i].remaining_time < min_burst_time && processes[i].remaining_time > 0) 
+            if (processes[i].arrival_time <= current_time && processes[i].priority < min_priority && processes[i].remaining_time > 0) 
             {
-                min_burst_time = processes[i].remaining_time;
+                min_priority = processes[i].priority;
                 shortest_process = i;
             }
         }
@@ -54,8 +56,8 @@ void sjf_scheduling()
 
         // Update the process details after executing the selected process
         current_time += processes[shortest_process].burst_time;
-        processes[shortest_process].remaining_time = 0;
         processes[shortest_process].completion_time = current_time;
+        processes[shortest_process].remaining_time = 0;
 
         // Calculate turnaround time and waiting time
         processes[shortest_process].turn_around_time = processes[shortest_process].completion_time - processes[shortest_process].arrival_time;
@@ -99,22 +101,23 @@ void print_resultant_table()
     printf("\nResultant Table:\n");
 
     // Print the table header with column names
-    printf("-------------------------------------------------------------------------------------------------\n");
-    printf("|  Process ID   |     A . T     |     B . T     |     C . T     |   T . A . T   |     W . T     |\n");
-    printf("-------------------------------------------------------------------------------------------------\n");
+    printf("-----------------------------------------------------------------------------------------------------------------\n");
+    printf("|  Process ID   |     A . T     |     B . T     |     C . T     |   T . A . T   |     W . T     |    Priority   |\n");
+    printf("-----------------------------------------------------------------------------------------------------------------\n");
 
     // Print process information for each process
     for (int i = 0; i < n; i++)
-        printf("|\tP%d\t|\t%d\t|\t%d\t|\t%d\t|\t%d\t|\t%d\t|\n", 
+        printf("|\tP%d\t|\t%d\t|\t%d\t|\t%d\t|\t%d\t|\t%d\t|\t%d\t|\n", 
             processes[i].process_id, 
             processes[i].arrival_time, 
             processes[i].burst_time, 
             processes[i].completion_time, 
             processes[i].turn_around_time, 
-            processes[i].waiting_time
+            processes[i].waiting_time,
+            processes[i].priority
         );
 
-    printf("-------------------------------------------------------------------------------------------------\n");    
+    printf("-----------------------------------------------------------------------------------------------------------------\n");    
 }
 
 // Function to print the Gantt Chart (graphical representation of process execution)
@@ -185,13 +188,15 @@ int main()
     for (int i = 0; i < n; i++)
     {
         processes[i].process_id = i + 1;
-        printf("Enter the arrival time of P%d: ", i + 1);
+        printf("Enter the arrival time of P%d : ", i + 1);
         scanf("%d", &processes[i].arrival_time);
-        printf("Enter the burst time of P%d: ", i + 1);
+        printf("Enter the burst time of P%d : ", i + 1);
         scanf("%d", &processes[i].burst_time);
+        printf("Enter the priorities of P%d (0 being the highest) : ", i + 1);
+        scanf("%d", &processes[i].priority);
     }
 
-    sjf_scheduling();           // Perform the SJF scheduling algorithm and calculate completion time, turnaround time, and waiting time for each process
+    non_preemptive_priority_scheduling();   // Perform the Non Pre-emptive Priority Scheduling algorithm and calculate completion time, turnaround time, and waiting time for each process
 
     print_gantt_chart();        // Print the Gantt chart
     
