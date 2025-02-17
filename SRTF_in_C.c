@@ -21,18 +21,18 @@ typedef struct
     int time;
 }G;
 
-G gantt_chart[2 * MAX_PROCESS]; // Array of Gantt chart
+G gantt_chart[MAX_PROCESS]; // Array of Gantt chart
 Process processes[MAX_PROCESS]; // Array of processes
 int I = 0;  // Gantt chart tracker index
-int n, q;  // Number of processes and time quantum (slice of time for Round Robin)
+int n;  // Number of processes
 
-// Function to perform Round Robin Scheduling and calculate the completion time, turnaround time and waiting time
-void round_robin_scheduling() 
+// Function to perform SRTF Scheduling and calculate the completion time, turnaround time and waiting time
+void srtf_scheduling()
 {
     int current_time = 0, completed_processes = 0;  // Track the current time and completed processes
 
     // Initialize remaining time for each process
-    for (int i = 0; i < n; i++) 
+    for (int i = 0; i < n; i++)
     {
         processes[i].remaining_time = processes[i].burst_time;
         processes[i].completion_time = -1;
@@ -52,52 +52,59 @@ void round_robin_scheduling()
             }
         }
     }
-
-    // Process execution with round robin scheduling
-    while (completed_processes < n) 
+    
+    // Perform the scheduling
+    while (completed_processes < n)
     {
-        int executed = 0;
+        int min_remaining_time = __INT_MAX__, next_process = -1; // Initialize the minimum remaining time and next process
 
-        // Find the process ready to execute
-        for (int i = 0; i < n; i++) 
+        // Find the process with minimum remaining time
+        for (int i=0; i < n; i++)
         {
-            if (processes[i].arrival_time <= current_time && processes[i].remaining_time > 0) 
+            if (processes[i].arrival_time <= current_time && processes[i].remaining_time < min_remaining_time && processes[i].remaining_time > 0) 
             {
-                if (processes[i].remaining_time > q) 
-                {
-                    current_time += q;
-                    processes[i].remaining_time -= q;
-                } 
-                else 
-                {
-                    current_time += processes[i].remaining_time;
-                    processes[i].remaining_time = 0;
-                    processes[i].completion_time = current_time;
-                    processes[i].turn_around_time = processes[i].completion_time - processes[i].arrival_time;
-                    processes[i].waiting_time = processes[i].turn_around_time - processes[i].burst_time;
-                    completed_processes++;
-                }
-                executed = 1;
-
-                if (I == 0 || gantt_chart[I-1].process_id != processes[i].process_id)
-                {
-                    gantt_chart[I].process_id = processes[i].process_id;
-                    gantt_chart[I].time = current_time;
-                    I++;
-                }
-                else
-                {
-                    gantt_chart[I-1].time = current_time;
-                }
+                min_remaining_time = processes[i].remaining_time;
+                next_process = i;
             }
         }
 
-        if (!executed)
+        // If no process is found, increment the current time
+        if (next_process == -1)
         {
-            gantt_chart[I].process_id = -1;
+            // Represent idle time in the Gantt chart
+            gantt_chart[I].process_id = -1;  // Placeholder for idle time
             gantt_chart[I].time = current_time;
             I++;
-            current_time ++;
+            current_time++;
+            continue;
+        }
+
+        // Update the remaining time for the process
+        processes[next_process].remaining_time--;
+
+        // Update the current time
+        current_time++;
+
+        // Update the completion time and turnaround time for the process
+        if (processes[next_process].remaining_time == 0) 
+        {
+            processes[next_process].completion_time = current_time;
+            processes[next_process].turn_around_time = processes[next_process].completion_time - processes[next_process].arrival_time;
+            processes[next_process].waiting_time = processes[next_process].turn_around_time - processes[next_process].burst_time;
+
+            completed_processes++;   // Increment the number of completed processes
+        }
+
+        // Update the Gantt chart  
+        if (I == 0 || gantt_chart[I-1].process_id != processes[next_process].process_id)
+        {
+            gantt_chart[I].process_id = processes[next_process].process_id;
+            gantt_chart[I].time = current_time;
+            I++;
+        }
+        else
+        {
+            gantt_chart[I-1].time = current_time;
         }
     }
 }
@@ -142,7 +149,14 @@ void print_gantt_chart()
     // Print the process IDs in the Gantt chart
     for (int i = 0; i < I; i++)
     {
-        printf("  P%d   |", gantt_chart[i].process_id);
+        if (gantt_chart[i].process_id == -1) 
+        {
+            printf("\t|");
+        } 
+        else 
+        {
+            printf("  P%d   |", gantt_chart[i].process_id);
+        }
     }
 
     printf("\n ");
@@ -192,8 +206,6 @@ int main()
     // Input the number of processes and the quantum number from the user
     printf("Enter the number of processes: ");
     scanf("%d", &n);
-    printf("Enter the quantum number: ");
-    scanf("%d", &q);
 
     // Input the arrival and burst times for each process
     for (int i = 0; i < n; i++)
@@ -205,7 +217,7 @@ int main()
         scanf("%d", &processes[i].burst_time);
     }
 
-    round_robin_scheduling();   // Perform the Round Robin Scheduling algorithm and calculate completion time, turnaround time, and waiting time for each process
+    srtf_scheduling();   // Perform the SRTF Scheduling algorithm and calculate completion time, turnaround time, and waiting time for each process
 
     print_gantt_chart();        // Print the Gantt chart
     
